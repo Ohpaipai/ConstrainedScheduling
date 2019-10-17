@@ -40,19 +40,19 @@ Graph::~Graph()
 
 void Graph::MakeGraph()
 {
-	char tempString[999999];
+	std::string tempString;
 	//openfile
 	ifile.open(filename, std::ios::in);
-	//record node component
-	std::vector<std::string>leaf;
 	//read file string
 	std::string paragraph;
+	//vector for names node;
+	std::vector<std::string>leaf;
 
+	/*parameter about input*/
 	bool inputs = false;
 	bool outputs = false;
 	bool names = false;
 	bool modles = false;
-	bool specialcase = false;
 
 	while (1) {
 		ifile >> paragraph;
@@ -91,7 +91,63 @@ void Graph::MakeGraph()
 			//give boolean function
 			else if (paragraph == ".names") 
 			{
-				
+				inputs = false;
+				outputs = false;
+				names = true;
+				modles = false;
+				std::stringstream ss;
+				// read string in this line
+				std::string _string="";
+				std::getline(ifile,tempString);
+				ss.str(tempString);	
+				while(1){
+					ss>>_string;
+					//nonsensese line
+					if(_string[0]=='#') break;
+					//last input
+					if(ss.eof()){
+						//change line
+						if(_string=="//"){
+							//read new line
+							std::getline(ifile,tempString);
+							/*clear last data*/
+							ss.clear();
+							ss.str("");
+							_string.clear();
+							//read to streamstring
+							ss.str(tempString);
+						}
+						else{
+							//check has same element
+							bool issame=false;
+							for(int i=0;i<leaf.size();i++){
+								if(leaf[i]==_string){
+									issame=true;
+									break;
+								}
+							}
+							if(issame){
+								leaf.push_back(_string);
+							}
+						}	
+					}
+					//not last input
+					else{
+						//check has same element
+							bool issame=false;
+							for(int i=0;i<leaf.size();i++){
+								if(leaf[i]==_string){
+									issame=true;
+									break;
+								}
+							}
+							if(issame){
+								leaf.push_back(_string);
+							}
+						
+					}
+
+				}
 			}
 			else if (inputs)
 			{
@@ -111,15 +167,15 @@ void Graph::MakeGraph()
 			}
 			else if (modles)
 			{
-				
+				Graghname = paragraph;					
 			}
 			else if (names)
 			{
-
+					
 			}
 		}
 		else {
-			ifile.getline(tempString, LEN_LENGTH);
+			std::getline(ifile,tempString);
 		}
 	}
 }

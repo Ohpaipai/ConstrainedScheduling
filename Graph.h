@@ -4,7 +4,9 @@
 #include<map>
 #include<fstream>
 #include<vector>
+#include<set>
 #include<sstream>
+#include<unordered_set>
 #define Operationtime 1
 const int LEN_LENGTH = 99999;
 //Opreation define
