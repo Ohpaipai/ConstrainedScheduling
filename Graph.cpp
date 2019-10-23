@@ -572,12 +572,12 @@ void Graph::mr_lcs()
 		for (int j = 0; j < this->Restrict_AND_Resource && !andqueue.empty(); j++)
 		{
 			Node tem = andqueue.top();
-			if (tem.slack <= 1)
-			{
+			//if (tem.slack <= 1)
+			//{
 				tem.level = i;
 				MRLCS_Circuit[tem.name] = tem;
 				andqueue.pop();
-			}
+			//}
 			
 		}
 		while (!andqueue.empty()&& andqueue.top().slack == 0)
@@ -592,13 +592,13 @@ void Graph::mr_lcs()
 		for (int j = 0; j < this->Restrict_OR_Resource && !orqueue.empty(); j++)
 		{
 			Node tem = orqueue.top();
-			if (tem.slack <= 1)
-			{
+			//if (tem.slack <= 1)
+			//{
 				tem.level = i;
 				MRLCS_Circuit[tem.name] = tem;
 				orqueue.pop();
 				
-			}
+			//}
 		}
 		while (!orqueue.empty() && orqueue.top().slack == 0)
 		{
@@ -612,13 +612,13 @@ void Graph::mr_lcs()
 		for (int j = 0; j < this->Restrict_NOT_Resource && !notqueue.empty(); j++)
 		{
 			Node tem = notqueue.top();
-			if (tem.slack <= 1)
-			{
+		//	if (tem.slack <= 1)
+		//	{
 				tem.level = i;
 				MRLCS_Circuit[tem.name] = tem;
 				notqueue.pop();
 				
-			}
+		//	}
 		}
 		while (!notqueue.empty() && notqueue.top().slack == 0)
 		{
@@ -717,7 +717,7 @@ void Graph::COut(bool can , char input)
 		}
 		else
 		{
-			//this->Output();
+			this->Output();
 			this->mr_lcs();
 			std::cout << "Latency-constrained Scheduling" << std::endl;
 		}
