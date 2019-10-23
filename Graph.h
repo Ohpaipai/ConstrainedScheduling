@@ -31,6 +31,7 @@ typedef struct Myclass {
 	int slack;
 	int oldlevel;
 	int exception;
+	int waitTime;
 	void initial(std::string _name) {
 		this->andResourceNum = 0;
 		this->orResourceNum = 0;
@@ -40,6 +41,7 @@ typedef struct Myclass {
 		this->oldlevel = 0;
 		this->status = _NULL;
 		this->name = _name;
+		this->waitTime=0;
 	}
 	bool operator< (const Myclass& b) const   
 	{
@@ -79,8 +81,8 @@ private:
 	int Restrict_AND_Resource;
 	int Restrict_OR_Resource;
 	int Restrict_NOT_Resource;
-	int MaxtimeInASAP;
-	int outputMaxtime;
+	int MaxtimeInASAP=0;
+	int outputMaxtime=0;
 	std::ifstream ifile;
 	std::string projectname;
 	std::vector<std::string>inputN;

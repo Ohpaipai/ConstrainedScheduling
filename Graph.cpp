@@ -1,10 +1,28 @@
 #include "Graph.h"
 Graph::Graph()
 {
+	this->Restrict_AND_Resource = 0;
+	this->Restrict_OR_Resource=0;
+	this->Restrict_NOT_Resource=0;
+	this->projectname="";
+	this->inputN.clear();
+	this->outputN.clear();
+	this->Circuit.clear();
+	this->MaxtimeInASAP=0;
+	this->outputMaxtime=0;
 }
 
 Graph::~Graph()
 {
+	this->Restrict_AND_Resource = 0;
+	this->Restrict_OR_Resource=0;
+	this->Restrict_NOT_Resource=0;
+	this->projectname="";
+	this->inputN.clear();
+	this->outputN.clear();
+	this->Circuit.clear();
+	this->MaxtimeInASAP=0;
+	this->outputMaxtime=0;
 }
 
 void Graph::makeCircuitDiagram(std::string _filename)
@@ -114,10 +132,18 @@ void Graph::makeCircuitDiagram(std::string _filename)
 			int runtime = Leaf.size() - 1; 
 			std::set<std::string>FunctionAboutNode;
 			Operation op = _AND;
+			//deal .names function
 			while (ss >> inputString)
 			{
-				if (inputString[0] == '#') break;
-				if (inputString[0] == '\\') {
+				//deal .names #
+				bool nottodo=false;
+				if (inputString[0] == '#') {
+					if(isnext==true||FunctionAboutNode.size()==0)
+						nottodo=true;
+					else
+						break;
+				}
+				else if (inputString[0] == '\\') {
 					inputString.clear();
 					std::getline(this->ifile, inputString);
 					ss.clear();
@@ -141,20 +167,35 @@ void Graph::makeCircuitDiagram(std::string _filename)
 						}
 					}
 				}
-				ss >> inputString;
+				if(!nottodo)
+					ss >> inputString;
 
 				//is or
 				if (isnext)
 				{
-					runtime -= 1;
-					if (runtime <= 0) break;
-					inputString.clear();
-
-
-					std::getline(this->ifile, inputString);
-					ss.clear();
-					ss.str(inputString);
-					
+					//deal .names #
+					if(!nottodo)
+					{
+						runtime -= 1;
+						if (runtime <= 0) break;
+						inputString.clear();
+						std::getline(this->ifile, inputString);
+						ss.clear();
+						ss.str(inputString);
+					}
+					else{
+						inputString.clear();
+						std::getline(this->ifile, inputString);
+						ss.clear();
+						ss.str(inputString);
+					}
+				} //have # but is not read time just like ""
+				else if(nottodo&&FunctionAboutNode.size()==0){
+				
+						inputString.clear();
+						std::getline(this->ifile, inputString);
+						ss.clear();
+						ss.str(inputString);
 				}
 				
 			}
@@ -187,6 +228,8 @@ void Graph::makeCircuitDiagram(std::string _filename)
 			}
 			//this->Circuit.insert(std::pair<std::string, Node>(Leaf[Leaf.size()-1],innode));
 			innode.level = t;
+			if(t>this->MaxtimeInASAP)
+				this->MaxtimeInASAP =t;
 			innode.status = op;
 			this->Circuit[Leaf[Leaf.size() - 1]] = innode;
 			/*for (int i = 0; i < Leaf.size()-1; i++)
@@ -679,35 +722,58 @@ void Graph::mr_lcs()
 		while (!andqueue.empty())
 		{
 			Node tem = andqueue.top();
-			tem.slack = tem.level - i - 1;
-			if (tem.slack < 0) tem.slack = 0;
+			tem.waitTime++;
+			if(tem.waitTime >=4){
+				tem.slack=0;
+			}
+			else{
+				tem.slack = tem.level - i - 1;
+				if (tem.slack < 0) tem.slack = 0;
+			}
 			newandqueue.push(tem);
 			andqueue.pop();
 		}
 		while (!orqueue.empty())
 		{
 			Node tem = orqueue.top();
-			tem.slack = tem.level-i-1;
-			if (tem.slack < 0) tem.slack = 0;
+			if(tem.waitTime >=4){
+				tem.slack=0;
+			}
+			else{
+				tem.slack = tem.level - i - 1;
+				if (tem.slack < 0) tem.slack = 0;
+			}
 			neworqueue.push(tem);
 			orqueue.pop();
 		}
 		while (!notqueue.empty())
 		{
 			Node tem = notqueue.top();
-			tem.slack = tem.level - i - 1;
-			if (tem.slack < 0) tem.slack = 0;
+			if(tem.waitTime >=4){
+				tem.slack=0;
+			}
+			else{
+				tem.slack = tem.level - i - 1;
+				if (tem.slack < 0) tem.slack = 0;
+			}
 			newnotqueue.push(tem);
 			notqueue.pop();
 		}
+		if(double((newandqueue.size()-andqueue.size())/this->Restrict_AND_Resource)>=5.0)
+			this->Restrict_AND_Resource++;
 		andqueue = newandqueue;
+		if(double((neworqueue.size()-orqueue.size())/this->Restrict_OR_Resource)>=5.0)
+			this->Restrict_OR_Resource++;
 		orqueue = neworqueue;
+		if(double((newnotqueue.size()-notqueue.size())/this->Restrict_NOT_Resource)>=5.0)
+			this->Restrict_NOT_Resource++;
 		notqueue = newnotqueue;
 	}
 	Circuit = MRLCS_Circuit;
 }
 void Graph::COut(bool can , char input)
 {
+	//std::cout<<this->MaxtimeInASAP<<std::endl;
 	if (can)
 	{
 		if (input == 'l')
@@ -717,7 +783,7 @@ void Graph::COut(bool can , char input)
 		}
 		else
 		{
-			this->Output();
+			//this->Output();
 			this->mr_lcs();
 			std::cout << "Latency-constrained Scheduling" << std::endl;
 		}
