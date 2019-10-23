@@ -1,11 +1,7 @@
 #include "Graph.h"
-
-
-
 Graph::Graph()
 {
 }
-
 
 Graph::~Graph()
 {
@@ -86,6 +82,8 @@ void Graph::makeCircuitDiagram(std::string _filename)
 			{
 				/*if (inputString == "h")
 				{
+
+
 					std::cout << "heds\n";
 				}*/
 				if (inputString[0] == '#') break;
@@ -112,9 +110,8 @@ void Graph::makeCircuitDiagram(std::string _filename)
 			std::getline(this->ifile, inputString);
 			ss.clear();
 			ss.str(inputString);
-
 			bool isnext = false;
-			int runtime = Leaf.size() - 1;
+			int runtime = Leaf.size() - 1; 
 			std::set<std::string>FunctionAboutNode;
 			Operation op = _AND;
 			while (ss >> inputString)
@@ -127,7 +124,6 @@ void Graph::makeCircuitDiagram(std::string _filename)
 					ss.str(inputString);
 				}
 				else {
-					
 					for (int i = 0; i < inputString.size(); i++)
 					{
 						if (inputString[i] == '-') {
@@ -153,6 +149,8 @@ void Graph::makeCircuitDiagram(std::string _filename)
 					runtime -= 1;
 					if (runtime <= 0) break;
 					inputString.clear();
+
+
 					std::getline(this->ifile, inputString);
 					ss.clear();
 					ss.str(inputString);
@@ -202,7 +200,6 @@ void Graph::makeCircuitDiagram(std::string _filename)
 		}
 		else if (inputString == ".end") break;
 	
-		
 	}
 	this->ifile.close();
 }
@@ -309,7 +306,6 @@ void Graph::setSchedule()
 							}
 
 							_name2.push_back(itN2->first);
-
 						}
 					}
 
@@ -317,71 +313,10 @@ void Graph::setSchedule()
 					
 				
 			}
-
-
 			_name = _name2;
-
 		}
 		
 	}
-}
-
-std::vector<std::string> Graph::Select(std::vector<std::string>& _A, const int num)
-{
-	//Expected value
-	std::vector<int>exception;
-	exception.resize(_A.size());
-	std::vector<std::string>returnTree;
-	//if resource big then you want to do
-	if (_A.size() <= num)
-	{
-		returnTree = _A;
-		_A.clear();
-	}
-	else {
-		//Expected value=all add
-		for (int i = 0; i < _A.size(); i++)
-		{
-			std::map<std::string, Node>::iterator it = Circuit.find(_A[i]);
-			exception[i] = it->second.orResourceNum * this->Restrict_OR_Resource +
-				it->second.andResourceNum * this->Restrict_OR_Resource +
-				it->second.notResourceNum * this->Restrict_NOT_Resource;
-		}
-		//Expected value to point posiion
-		std::vector<int>exceptionposition = exception;
-		//sort to find biggest
-		std::sort(exception.begin(), exception.end());
-		std::vector<int>::iterator it;
-		//reset queuq let chosen dispear ,another stay make a new vector
-		for (int i = 0; i < num; i++)
-		{
-			int a = 0;
-			for (it = exceptionposition.begin(); it != exceptionposition.end(); it++)
-			{
-				if (*it == exception[exception.size() - 1])
-				{
-					returnTree.push_back(_A[a]);
-					it = exceptionposition.erase(it);
-					std::vector<std::string>it2;
-					for (int j = 0; j < _A.size(); j++)
-					{
-						if (a != j)
-						{
-							it2.push_back(_A[j]);
-						}
-					}
-					_A = it2;
-					exception.pop_back();
-					break;
-				}
-				a++;
-			}
-
-		}
-	}
-
-	return returnTree;
-
 }
 
 bool Graph::ALAP(int _time)
@@ -503,7 +438,7 @@ bool Graph::ml_rcs(const int m_and, const int m_or, const int m_not)
 		}
 	}
 
-	int t = 1;
+	int t = 1; 
 	//reaally do 
 	if ((m_not == 0 && notr != 0) || (m_and == 0 && andr != 0) || (m_or == 0 && orr != 0))
 		return false;
@@ -700,7 +635,6 @@ void Graph::mr_lcs()
 		std::priority_queue<Node, std::vector<Node>, cmp>neworqueue;
 		for (std::map<std::string, Node>::iterator it = Circuit.begin(); it != Circuit.end(); it++)
 		{
-
 			if (it->second.oldlevel == i + 1) {
 				bool find = true;
 				for (std::set<std::string>::iterator its = it->second.Consist.begin(); its != it->second.Consist.end(); its++)
@@ -770,10 +704,8 @@ void Graph::mr_lcs()
 		orqueue = neworqueue;
 		notqueue = newnotqueue;
 	}
-
 	Circuit = MRLCS_Circuit;
 }
-
 void Graph::COut(bool can , char input)
 {
 	if (can)
@@ -787,7 +719,6 @@ void Graph::COut(bool can , char input)
 		{
 			//this->Output();
 			this->mr_lcs();
-			
 			std::cout << "Latency-constrained Scheduling" << std::endl;
 		}
 		//output
@@ -820,9 +751,6 @@ void Graph::COut(bool can , char input)
 					}
 				}
 			}
-
-
-
 			std::cout << i << " :";
 			std::cout << " {";
 			for (int k = 0; k < outand.size(); k++)
@@ -852,12 +780,7 @@ void Graph::COut(bool can , char input)
 			}
 			std::cout << "} ";
 			std::cout << std::endl;
-
-
-
-
-
-		}
+	}
 
 		std::cout << "#AND: " << this->Restrict_AND_Resource << std::endl;
 		std::cout << "#OR: " << this->Restrict_OR_Resource << std::endl;
@@ -866,17 +789,15 @@ void Graph::COut(bool can , char input)
 
 	}
 	else {
-		std::cout << "No feasible solution." << std::endl << " END" << std::endl;
+		std::cout << "No feasible solution." << std::endl << "END" << std::endl;
 	}
 	
 }
-
 void Graph::Recurison(std::map<std::string, Node>& _G, std::string _name, int t, bool& can)
 {
 	if (can == false) {
 		return;
 	}
-
 	std::map<std::string, Node>::iterator it = _G.find(_name);
 	for (std::set<std::string>::iterator its=it->second.Consist.begin();its!=it->second.Consist.end();its++)
 	{
@@ -891,10 +812,8 @@ void Graph::Recurison(std::map<std::string, Node>& _G, std::string _name, int t,
 		}
 		else if (itT->second.level > t)
 		{
-
 			itT->second.level = t;
 		}
-
 		if (t - 1 < 0)
 		{
 			if (itT->second.status != _NULL)
@@ -908,9 +827,5 @@ void Graph::Recurison(std::map<std::string, Node>& _G, std::string _name, int t,
 			
 			Recurison(_G, itT->first, t - 1, can);
 		}
-		
-
-
-
 	}
 }

@@ -9,7 +9,6 @@
 #include<algorithm>
 #include<queue>
 #define Operationtime 1
-const int LEN_LENGTH = 99999;
 //Opreation define
 enum Operation {
 	_NULL,
@@ -47,11 +46,7 @@ typedef struct Myclass {
 		if (this->exception==b.exception)  return this->BeConsist.size()<b.BeConsist.size();
 		else return this->exception < b.exception;
 	}
-
-	
 }Node;
-
-
 struct cmp
 {
 	bool operator()(Node a, Node b)
@@ -66,11 +61,6 @@ struct cmp
 		else return a.slack > b.slack;
 	}
 };
-
-
-
-
-
 class Graph
 {
 public:
@@ -79,7 +69,6 @@ public:
 	void makeCircuitDiagram(std::string);
 	void Output();
 	void setSchedule();
-	std::vector<std::string> Select(std::vector<std::string>& _A, const int num);
 	bool ALAP(int _time);
 	bool ml_rcs(const int m_and, const int m_or, const int m_not);
 	void mr_lcs();
@@ -97,4 +86,3 @@ private:
 	std::vector<std::string>inputN;
 	std::vector<std::string>outputN;
 };
-
